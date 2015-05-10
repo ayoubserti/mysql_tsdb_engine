@@ -9,6 +9,7 @@
 #include "ha_tsdb_engine.h"
 #include "probes_mysql.h"
 #include "sql_plugin.h"
+#include <boost/make_shared.hpp>
 
 //gobal variables:
 const char* ha_tsdb_engine_system_database= NULL;
@@ -679,8 +680,10 @@ const char *enum_var_names[]=
 
 TYPELIB enum_var_typelib=
 {
-  array_elements(enum_var_names) - 1, "enum_var_typelib",
-  enum_var_names, NULL
+  array_elements(enum_var_names) - 1,
+  "enum_var_typelib",
+  enum_var_names,
+  NULL
 };
 
 static MYSQL_SYSVAR_ENUM(
@@ -790,8 +793,8 @@ mysql_declare_plugin(tsdb_engine)
   MYSQL_STORAGE_ENGINE_PLUGIN,
   &tsdb_engine_storage_engine,
   "tsdb_engine",
-  "Brian Aker, MySQL AB",
-  "tsdb_engine storage engine",
+  "Ayoub Serti ayb.serti@gmail.com",
+  "time series storage engine",
   PLUGIN_LICENSE_GPL,
   tsdb_engine_init_func,                            /* Plugin Init */
   NULL,                                         /* Plugin Deinit */
