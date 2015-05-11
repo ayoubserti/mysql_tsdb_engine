@@ -4,11 +4,20 @@
     @brief the tsdb_engine is a mysql plugin; it's a storage engine to manipulate time series 
     
 */
-
+#pragma once
 #include "my_global.h"                   /* ulonglong */
 #include "thr_lock.h"                    /* THR_LOCK, THR_LOCK_DATA */
 #include "handler.h"                     /* handler */
 #include "my_base.h"                     /* ha_rows */
+
+
+//forward declaration
+namespace tsdb{
+  
+  class Structure;
+  class Field;
+  class Table;
+}
 
 /*
 @brief tsdb_engine_share is a class that will be shared among all open handlers
@@ -225,4 +234,9 @@ class ha_tsdb_engine: public handler
   THR_LOCK_DATA **store_lock(THD *thd, THR_LOCK_DATA **to,
                              enum thr_lock_type lock_type);     ///< required
 
+
+private:
+//private function
+
+ int CreateTSDBStructure(Field** inFields, tsdb::Structure& *outTSDBStruct);
 };

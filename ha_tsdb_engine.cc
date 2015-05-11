@@ -5,11 +5,19 @@
     @brief ha_tsdb_engine implementation
     
 */
+//include precompiled headers
+#include "PCHfile.h"
+
+
 #include "sql_class.h"           // MYSQL_HANDLERTON_INTERFACE_VERSION
 #include "ha_tsdb_engine.h"
 #include "probes_mysql.h"
 #include "sql_plugin.h"
-#include <boost/make_shared.hpp>
+
+//internal use
+#include <sys/stat.h>
+
+
 
 //gobal variables:
 const char* ha_tsdb_engine_system_database= NULL;
@@ -659,9 +667,56 @@ int ha_tsdb_engine::create(const char *name, TABLE *table_arg,
 {
   DBUG_ENTER("ha_tsdb_engine::create");
   /*
-    This is not implemented but we want someone to be able to see that it
-    works.
+    retrieve table name
   */
+  LEX_STRING tblName = table_arg->table_name;
+  if ( tblName.length == 0 )
+  {
+    DBUG_RETURN(1);
+  }
+  
+  std::string strTableName;
+  strTableName.copy(tblName.str,tblName.length);
+  
+  //append file extension
+  strTableName+=".tsdb";
+  
+  //check file exists
+  struct stat finfo;
+	int intstat;
+	intstat = stat(strTableName.c_str(),&finfo);
+	hid_t ofh;
+	
+	if(intstat != 0) 
+	{
+	  // Try to create the file
+		ofh = H5Fcreate(strTableName.c_str(),H5F_ACC_EXCL,H5P_DEFAULT,H5P_DEFAULT);
+		if(ofh < 0) {
+			cerr << "Error creating TSDB file: '" << strTableName << "'." << endl;
+			DBUG_RETURN(-1);
+		}
+	}
+	else
+	{
+	  //exception
+	  DBUG_RETURN(-1);
+	}
+  
+  TABLE_SHARE* share = table_arg->s;
+  if ( share != NULL )
+  {
+    /*
+     table share
+    */
+ 
+  }
+  Field** fields = table_args->field;
+  if ( fields != NULL )
+  {
+     Field* 
+  }
+  
+  
   DBUG_RETURN(0);
 }
 
