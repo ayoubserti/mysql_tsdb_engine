@@ -24,11 +24,11 @@ int ha_tsdb_engine::CreateTSDBStructure(Field** inFields, tsdb::Structure& *outT
         error = -1;
     }else
     {
-        Field* my_field = *inFields;
-        while (my_field != NULL)
+        Field* myfield = *inFields;
+        while (myfield != NULL)
         {
             tsdb::Field* dbField = NULL;
-           switch(my_field->type())
+           switch(myfield->type())
            {
                case MYSQL_TYPE_DECIMAL:
                case MYSQL_TYPE_FLOAT :
@@ -74,7 +74,7 @@ int ha_tsdb_engine::CreateTSDBStructure(Field** inFields, tsdb::Structure& *outT
                default:
                  break;
            }
-            my_fiel++;
+            myfield++;
         }
     }
     
