@@ -64,7 +64,7 @@ int ha_tsdb_engine::CreateTSDBStructure(Field** inFields, tsdb::Structure& *outT
                case MYSQL_TYPE_SET:
                case MYSQL_TYPE_VAR_STRING:
                case MYSQL_TYPE_STRING:
-                 dbField = new tsdb::StringField(myfield->field_name);
+                 dbField = new tsdb::StringField(myfield->field_name,myfield->size_of());
                  tsfields.push_back(dbField);
                  break;
                case MYSQL_TYPE_LONGLONG :
