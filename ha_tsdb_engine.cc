@@ -669,7 +669,7 @@ int ha_tsdb_engine::create(const char *name, TABLE *table_arg,
   /*
     retrieve table name
   */
-  LEX_STRING tblName = table_arg->table_name;
+  LEX_STRING tblName = table_arg->s->table_name;
   if ( tblName.length == 0 )
   {
     DBUG_RETURN(1);
@@ -692,7 +692,7 @@ int ha_tsdb_engine::create(const char *name, TABLE *table_arg,
 	  // Try to create the file
 		ofh = H5Fcreate(strTableName.c_str(),H5F_ACC_EXCL,H5P_DEFAULT,H5P_DEFAULT);
 		if(ofh < 0) {
-			cerr << "Error creating TSDB file: '" << strTableName << "'." << endl;
+			std::cerr << "Error creating TSDB file: '" << strTableName << "'." << std::endl;
 			DBUG_RETURN(-1);
 		}
 	}
@@ -702,20 +702,13 @@ int ha_tsdb_engine::create(const char *name, TABLE *table_arg,
 	  DBUG_RETURN(-1);
 	}
   
-  TABLE_SHARE* share = table_arg->s;
-  if ( share != NULL )
-  {
-    /*
-     table share
-    */
- 
-  }
+  /*
   Field** fields = table_args->field;
   if ( fields != NULL )
   {
      Field* 
   }
-  
+  */
   
   DBUG_RETURN(0);
 }

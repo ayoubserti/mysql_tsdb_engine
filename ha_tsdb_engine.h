@@ -9,7 +9,7 @@
 #include "thr_lock.h"                    /* THR_LOCK, THR_LOCK_DATA */
 #include "handler.h"                     /* handler */
 #include "my_base.h"                     /* ha_rows */
-
+#include <table.h>
 
 //forward declaration
 namespace tsdb{
@@ -238,5 +238,5 @@ class ha_tsdb_engine: public handler
 private:
 //private function
 
- int CreateTSDBStructure(Field** inFields, tsdb::Structure& *outTSDBStruct);
+ int CreateTSDBStructure(Field** inFields, tsdb::Structure* *outTSDBStruct);
 };
