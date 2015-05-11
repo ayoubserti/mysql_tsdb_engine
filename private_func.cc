@@ -10,14 +10,14 @@
 #include "probes_mysql.h"
 #include "sql_plugin.h"
 
-int ha_tsdb_engine::CreateTSDBStructure(Field** inFields, tsdb::Structure& *outTSDBStruct)
+int ha_tsdb_engine::CreateTSDBStructure(Field** inFields, tsdb::Structure* *outTSDBStruct)
 {
     int error = 0;
     
 	std::vector<tsdb::Field*> tsfields;
 
 	/* Add the timestamp field */
-	tsfields.push_back(new TimestampField("_TSDB_timestamp"));
+	tsfields.push_back(new tsdb::TimestampField("_TSDB_timestamp"));
     
     if ( inFields  == NULL)
     {
@@ -41,7 +41,7 @@ int ha_tsdb_engine::CreateTSDBStructure(Field** inFields, tsdb::Structure& *outT
                case MYSQL_TYPE_SHORT:
                case MYSQL_TYPE_YEAR :
                case MYSQL_TYPE_LONG :
-                 dbField = new Int32Field(myfield->field_name);
+                 dbField = new tsdb::Int32Field(myfield->field_name);
                  tsfields.push_back(dbField);
                  break;
                case MYSQL_TYPE_BIT :
@@ -64,13 +64,13 @@ int ha_tsdb_engine::CreateTSDBStructure(Field** inFields, tsdb::Structure& *outT
                case MYSQL_TYPE_SET:
                case MYSQL_TYPE_VAR_STRING:
                case MYSQL_TYPE_STRING:
-                 dbField = new tsdb::StringField(myfield->field_name,myfield->size_of());
+                 dbField = new tsdb::StringField(myfield->field_name,255);
                  tsfields.push_back(dbField);
                  break;
                case MYSQL_TYPE_LONGLONG :
                  dbField = new tsdb::RecordField(myfield->field_name);
                  tsfields.push_back(dbField);
-               case 
+       
                default:
                  break;
            }
@@ -78,8 +78,8 @@ int ha_tsdb_engine::CreateTSDBStructure(Field** inFields, tsdb::Structure& *outT
         }
     }
     
-    outTSDBStruct = new tsdb::Structure(tsfields,false);
-    
+    tsdb::Structure* TSDBStruct = new tsdb::Structure(tsfields,false);
+    *outTSDBStruct = TSDBStruct;
     return error;
 }
 
