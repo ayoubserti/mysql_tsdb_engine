@@ -669,14 +669,14 @@ int ha_tsdb_engine::create(const char *name, TABLE *table_arg,
   /*
     retrieve table name
   */
-  LEX_STRING tblName = table_arg->s->table_name;
-  if ( tblName.length == 0 )
+  LEX_STRING filePath = table_arg->s->path;
+  if ( filePath.length == 0 )
   {
     DBUG_RETURN(1);
   }
   
-  std::string strTableName;
-  strTableName.copy(tblName.str,tblName.length);
+  std::string strTableName(name) , strFilePath;
+  strFilePath.copy(filePath.str,filePath.length);
   
   //append file extension
   strTableName+=".tsdb";
@@ -684,22 +684,22 @@ int ha_tsdb_engine::create(const char *name, TABLE *table_arg,
   //check file exists
   struct stat finfo;
 	int intstat;
-	intstat = stat(strTableName.c_str(),&finfo);
+	intstat = stat(strFilePath.c_str(),&finfo);
 	hid_t ofh;
 	
 	if(intstat != 0) 
 	{
 	  // Try to create the file
-		ofh = H5Fcreate(strTableName.c_str(),H5F_ACC_EXCL,H5P_DEFAULT,H5P_DEFAULT);
+		ofh = H5Fcreate(strFilePath.c_str(),H5F_ACC_EXCL,H5P_DEFAULT,H5P_DEFAULT);
 		if(ofh < 0) {
-			std::cerr << "Error creating TSDB file: '" << strTableName << "'." << std::endl;
+			std::cerr << "Error creating TSDB file: '" << strFilePath << "'." << std::endl;
 			DBUG_RETURN(-1);
 		}
 	}
 	else
 	{
 	  //exception
-	  std::cerr << "Error reading file" << strTableName << std::endl;
+	  std::cerr << "Error reading file" << strFilePath << std::endl;
 	  DBUG_RETURN(-5);
 	}
   
