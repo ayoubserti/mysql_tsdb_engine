@@ -699,7 +699,8 @@ int ha_tsdb_engine::create(const char *name, TABLE *table_arg,
 	else
 	{
 	  //exception
-	  DBUG_RETURN(-1);
+	  std::cerr << "Error reading file" << strTableName << std::endl;
+	  DBUG_RETURN(-5);
 	}
   
   /*
