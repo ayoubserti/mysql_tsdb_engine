@@ -703,6 +703,13 @@ int ha_tsdb_engine::create(const char *name, TABLE *table_arg,
 	  std::cerr << "Error reading file" << strFilePath << std::endl;
 	  DBUG_RETURN(-5);
 	}
+  tsdb::Structure* intStructure;
+  int err = CreateTSDBStructure(table_arg->field,intStructure);
+  if ( err != 0)
+  {
+    std::cerr << "Error when creating internal structure " << err << std::endl;  ;
+    return -6;
+  }
   
   /*
   Field** fields = table_args->field;
