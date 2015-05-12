@@ -690,7 +690,7 @@ int ha_tsdb_engine::create(const char *name, TABLE *table_arg,
 	if(intstat != 0) 
 	{
 	  // Try to create the file
-		ofh = H5Fcreate(strFilePath.c_str(),H5F_ACC_EXCL,H5P_DEFAULT,H5P_DEFAULT);
+		ofh = H5Fcreate(strTableName.c_str(),H5F_ACC_EXCL,H5P_DEFAULT,H5P_DEFAULT);
 		if(ofh < 0) {
 		  std::cerr << "[INFO]: name:" << name << std::endl;
 			std::cerr << "Error creating TSDB file: '" << strFilePath << "'." << std::endl;
