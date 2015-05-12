@@ -17,6 +17,7 @@
 #include "table.h"
 #include "structure.h"
 #include "field.h"
+#include "timeseries.h"
 
 //stl 
 #include<string>
