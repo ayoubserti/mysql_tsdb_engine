@@ -47,6 +47,7 @@ static bool tsdb_engine_is_supported_system_table(const char *db,
 tsdb_engine_share::tsdb_engine_share()
 {
   thr_lock_init(&lock);
+  use_count=0;
 }
 
 
@@ -105,7 +106,9 @@ static handler* tsdb_engine_create_handler(handlerton *hton,
 //call super ctor
 ha_tsdb_engine::ha_tsdb_engine(handlerton *hton, TABLE_SHARE *table_arg)
   :handler(hton, table_arg)
-{}
+{
+  fTMSeries = NULL;
+}
 
 
 
@@ -177,10 +180,27 @@ int ha_tsdb_engine::open(const char *name, int mode, uint test_if_locked)
 {
     //need to be changed to open our table
   DBUG_ENTER("ha_tsdb_engine::open");
+  
 
   if (!(share = get_share()))
     DBUG_RETURN(1);
   thr_lock_data_init(&share->lock,&lock,NULL);
+  
+  std::string filename(name);
+  filename+=bas_ext()[0]; //add ".tsdb"
+  
+  hid_t ofh = H5Fopen(filename.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+  if(ofh < 0) 
+  {
+			std::cerr << "Error opening TSDB file: '" << filename << "'." << std::endl;
+			return -1;
+	}
+	try{
+	fTMSeries = new tsdb::Timeseries(ofh,"tsdb");
+	}catch(...)
+	{
+	  return -1;
+	}
 
   DBUG_RETURN(0);
 }
@@ -195,6 +215,10 @@ int ha_tsdb_engine::open(const char *name, int mode, uint test_if_locked)
 int ha_tsdb_engine::close(void)
 {
   DBUG_ENTER("ha_tsdb_engine::close");
+  
+  if (NULL != fTMSeries )
+    delete fTMSeries;
+  
   DBUG_RETURN(0);
 }
 
@@ -713,7 +737,7 @@ mysql_mutex_lock(&fMutex);
 	  DBUG_RETURN(-5);
 	}
 
-  tsdb::Structure* intStructure;
+  tsdb::Structure* intStructure=NULL;
   int err = CreateTSDBStructure(table_arg->field,&intStructure);
   if ( err != 0)
   {
@@ -721,14 +745,11 @@ mysql_mutex_lock(&fMutex);
     return -6;
   }
   tsdb::Timeseries ts = tsdb::Timeseries(ofh,"tsdb","",boost::make_shared<tsdb::Structure>(*intStructure));
+  //close hdf5 handle
+  H5Fclose(ofh);
+  
+  
   fflush(stderr); 
-  /*
-  Field** fields = table_args->field;
-  if ( fields != NULL )
-  {
-     Field* 
-  }
-  */
   mysql_mutex_unlock(&fMutex);
   DBUG_RETURN(0);
 }

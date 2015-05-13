@@ -17,6 +17,7 @@ namespace tsdb{
   class Structure;
   class Field;
   class Table;
+  class Timeseries;
 }
 
 /*
@@ -28,7 +29,9 @@ class tsdb_engine_share : public Handler_share {
     
     public:
   THR_LOCK lock;
+  unsigned long use_count;
   tsdb_engine_share();
+  
   ~tsdb_engine_share()
   {
     thr_lock_delete(&lock);
@@ -237,6 +240,7 @@ class ha_tsdb_engine: public handler
 
 private:
 mysql_mutex_t fMutex;
+tsdb::Timeseries* fTMSeries;
 //private function
 
  int CreateTSDBStructure(Field** inFields, tsdb::Structure* *outTSDBStruct);
