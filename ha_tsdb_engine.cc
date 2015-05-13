@@ -24,7 +24,7 @@ const char* ha_tsdb_engine_system_database= NULL;
 
 //file extensions
 static const char *ha_tsdb_engine_exts[] = {
-  "tsdb"
+  ".tsdb"
 };
 
 
