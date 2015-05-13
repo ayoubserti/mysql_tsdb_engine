@@ -665,7 +665,16 @@ ha_rows ha_tsdb_engine::records_in_range(uint inx, key_range *min_key,
 int ha_tsdb_engine::create(const char *name, TABLE *table_arg,
                        HA_CREATE_INFO *create_info)
 {
+
   DBUG_ENTER("ha_tsdb_engine::create");
+mysql_mutex_lock(&fMutex);
+ if ( share == NULL )share = get_share();
+/* if (share->count == 0 )
+ {
+	thr_lock_init(&share->lock)
+ }*/
+//  thr_lock_data_init(&share->lock,&lock,NULL);
+
   /*
     retrieve table name
   */
@@ -703,14 +712,16 @@ int ha_tsdb_engine::create(const char *name, TABLE *table_arg,
 	  std::cerr << "Error reading file" << strFilePath << std::endl;
 	  DBUG_RETURN(-5);
 	}
+
   tsdb::Structure* intStructure;
-  int err = CreateTSDBStructure(table_arg->field,intStructure);
+  int err = CreateTSDBStructure(table_arg->field,&intStructure);
   if ( err != 0)
   {
     std::cerr << "Error when creating internal structure " << err << std::endl;  ;
     return -6;
   }
-  
+  tsdb::Timeseries ts = tsdb::Timeseries(ofh,"tsdb","",boost::make_shared<tsdb::Structure>(*intStructure));
+  fflush(stderr); 
   /*
   Field** fields = table_args->field;
   if ( fields != NULL )
@@ -718,7 +729,7 @@ int ha_tsdb_engine::create(const char *name, TABLE *table_arg,
      Field* 
   }
   */
-  
+  mysql_mutex_unlock(&fMutex);
   DBUG_RETURN(0);
 }
 

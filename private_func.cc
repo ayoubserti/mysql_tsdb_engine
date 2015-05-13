@@ -13,7 +13,7 @@
 int ha_tsdb_engine::CreateTSDBStructure(Field** inFields, tsdb::Structure* *outTSDBStruct)
 {
     int error = 0;
-    
+        std::cerr << " Enter CreateTSDBStructure " << std::endl; 
 	std::vector<tsdb::Field*> tsfields;
 
 	/* Add the timestamp field */
@@ -24,10 +24,15 @@ int ha_tsdb_engine::CreateTSDBStructure(Field** inFields, tsdb::Structure* *outT
         error = -1;
     }else
     {
-        Field* myfield = *inFields;
-        while (myfield != NULL)
+      for (  Field** mfield = inFields; *mfield; mfield++)
         {
+		Field* myfield = *mfield;
+		if (myfield->is_null() )
+		{
+			return -1;
+		}
             tsdb::Field* dbField = NULL;
+	    std::cerr << "[DEBUG] " << myfield->field_name << std::endl;
            switch(myfield->type())
            {
                case MYSQL_TYPE_DECIMAL:
@@ -74,7 +79,6 @@ int ha_tsdb_engine::CreateTSDBStructure(Field** inFields, tsdb::Structure* *outT
                default:
                  break;
            }
-            myfield++;
         }
     }
     

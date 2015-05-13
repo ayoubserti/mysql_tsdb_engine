@@ -236,6 +236,7 @@ class ha_tsdb_engine: public handler
 
 
 private:
+mysql_mutex_t fMutex;
 //private function
 
  int CreateTSDBStructure(Field** inFields, tsdb::Structure* *outTSDBStruct);
