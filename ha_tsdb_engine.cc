@@ -193,7 +193,7 @@ int ha_tsdb_engine::open(const char *name, int mode, uint test_if_locked)
   if(ofh < 0) 
   {
 			std::cerr << "Error opening TSDB file: '" << filename << "'." << std::endl;
-			return -1;
+			return 0;
 	}
 	try{
 	fTMSeries = new tsdb::Timeseries(ofh,"tsdb");
@@ -744,7 +744,14 @@ mysql_mutex_lock(&fMutex);
     std::cerr << "Error when creating internal structure " << err << std::endl;  ;
     return -6;
   }
-  tsdb::Timeseries ts = tsdb::Timeseries(ofh,"tsdb","",boost::make_shared<tsdb::Structure>(*intStructure));
+  try{
+    tsdb::Timeseries ts =  tsdb::Timeseries(ofh,"tsdb","",boost::make_shared<tsdb::Structure>(*intStructure));
+  }catch(...)
+  {
+    std::cerr << "[ERROR]: exception" << std::endl;
+    return -7;
+  }
+  
   //close hdf5 handle
   H5Fclose(ofh);
   
