@@ -201,7 +201,7 @@ int ha_tsdb_engine::open(const char *name, int mode, uint test_if_locked)
 	{
 	  return -1;
 	}
-
+  H5Fclose(ofh);
   DBUG_RETURN(0);
 }
 
@@ -234,6 +234,15 @@ int ha_tsdb_engine::write_row(uchar *buf)
 {
   DBUG_ENTER("ha_tsdb_engine::write_row");
  
+ for (Field **field = table->field ; *field ; field++)
+ {
+   if ( !((*field)->is_null()) )
+   {
+     //(*field)>pack()
+     std::cerr << "[NOTE] field offset:" << (*field)->offset(table->record[0]) << std::endl;
+   }
+ }
+  
   DBUG_RETURN(0);
 }
 
@@ -580,7 +589,7 @@ int ha_tsdb_engine::external_lock(THD *thd, int lock_type)
   modify a write lock to a read lock (or some other lock), ignore the
   lock (if we don't want to use MySQL table locks at all), or add locks
   for many tables (like we do when we are using a MERGE handler).
-  Berkeley DB, for tsdb_engine, changes all WRITE locks to TL_WRITE_ALLOW_WRITE
+  Berkeley DB, for example, changes all WRITE locks to TL_WRITE_ALLOW_WRITE
   (which signals that we are doing WRITES, but are still allowing other
   readers and writers).
   When releasing locks, store_lock() is also called. In this case one
