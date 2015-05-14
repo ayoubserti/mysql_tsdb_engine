@@ -234,15 +234,25 @@ int ha_tsdb_engine::write_row(uchar *buf)
 {
   DBUG_ENTER("ha_tsdb_engine::write_row");
  
+ 
+ size_t recordsize = fTMSeries->structure()->getSizeOf();
+ uchar* recordPtr = (uchar*)sql_alloc(recordsize);
+ 
  for (Field **field = table->field ; *field ; field++)
  {
+   
    if ( !((*field)->is_null()) )
    {
      //(*field)>pack()
-     std::cerr << "[NOTE] field offset:" << (*field)->offset(table->record[0]) << std::endl;
+     //uchar* to = (uchar*)sql_alloc((*field)->data_length());
+     (*field)->pack(recordPtr,buf,(*field)->data_length(),(*field)->offset(table->record[0]));
+     
+     std::cerr << "[NOTE] field offset:" << (*field)->offset(table->record[0]) << " " << buf + (*field)->offset(table->record[0])<< std::endl;
+    
    }
  }
   
+  fTMSeries->appendRecords(1,recordPtr,false);
   DBUG_RETURN(0);
 }
 
