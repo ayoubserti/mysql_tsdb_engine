@@ -270,7 +270,7 @@ int ha_tsdb_engine::write_row(uchar *buf)
    }
  }
   
-  fTMSeries->appendRecords(1,recordPtr,false);
+  fTMSeries->appendRecords(1,urecord,false);
   DBUG_RETURN(0);
 }
 
