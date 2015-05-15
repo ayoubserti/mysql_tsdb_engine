@@ -272,7 +272,7 @@ int ha_tsdb_engine::write_row(uchar *buf)
   try{
   fTMSeries->appendRecords(1,urecord,false);
   }
-  catch (TimeseriesException& e)
+  catch (tsdb::TimeseriesException& e)
   {
     std::cerr << "COULD NOT SAVE ROW " << e.what() << std::endl;
   }
