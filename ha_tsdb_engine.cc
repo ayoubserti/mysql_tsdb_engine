@@ -236,8 +236,23 @@ int ha_tsdb_engine::write_row(uchar *buf)
  
  
  size_t recordsize = fTMSeries->structure()->getSizeOf();
- uchar* recordPtr = (uchar*)sql_alloc(recordsize);
+ uchar* recordPtr = (uchar*)sql_alloc(recordsize + 8 + 1); //8bytes for time stamps, 1 dummy byte
  
+ struct timespec tms;
+ if (clock_gettime(CLOCK_REALTIME,&tms)) 
+ {
+        return -1;
+ }
+  int64_t micros = tms.tv_sec * 1000000;
+  /* Add full microseconds */
+  micros += tms.tv_nsec/1000;
+  /* round up if necessary */
+  if (tms.tv_nsec % 1000 >= 500) {
+      ++micros;
+  }
+  
+  memcpy(recordPtr,&micros,8);
+  
  for (Field **field = table->field ; *field ; field++)
  {
    
@@ -245,7 +260,7 @@ int ha_tsdb_engine::write_row(uchar *buf)
    {
      //(*field)>pack()
      //uchar* to = (uchar*)sql_alloc((*field)->data_length());
-     (*field)->pack(recordPtr,buf,(*field)->data_length(),(*field)->offset(table->record[0]));
+     (*field)->pack(recordPtr+8,buf,(*field)->data_length(),(*field)->offset(table->record[0]));
      
      std::cerr << "[NOTE] field offset:" << (*field)->offset(table->record[0]) << " " << buf + (*field)->offset(table->record[0])<< std::endl;
     
