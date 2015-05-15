@@ -251,8 +251,11 @@ int ha_tsdb_engine::write_row(uchar *buf)
       ++micros;
   }
   
-  memcpy(recordPtr,&micros,8);
+  std::cerr << "[NOTE]: micros = " << micros << std::endl;
   
+  memcpy(recordPtr,&micros,8);
+  uchar* urecord = recordPtr;
+  recordPtr+=8;
  for (Field **field = table->field ; *field ; field++)
  {
    
@@ -260,8 +263,8 @@ int ha_tsdb_engine::write_row(uchar *buf)
    {
      //(*field)>pack()
      //uchar* to = (uchar*)sql_alloc((*field)->data_length());
-     (*field)->pack(recordPtr+8,buf,(*field)->data_length(),(*field)->offset(table->record[0]));
-     
+    recordPtr=  (*field)->pack(recordPtr,buf,(*field)->data_length(),(*field)->offset(table->record[0]));
+    
      std::cerr << "[NOTE] field offset:" << (*field)->offset(table->record[0]) << " " << buf + (*field)->offset(table->record[0])<< std::endl;
     
    }
