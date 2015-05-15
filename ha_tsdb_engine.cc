@@ -269,8 +269,13 @@ int ha_tsdb_engine::write_row(uchar *buf)
     
    }
  }
-  
+  try{
   fTMSeries->appendRecords(1,urecord,false);
+  }
+  catch (...)
+  {
+    std::cerr << "COULD NOT SAVE ROW" << std::endl;
+  }
   DBUG_RETURN(0);
 }
 
