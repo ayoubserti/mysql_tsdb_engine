@@ -463,7 +463,8 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 		  val+=8;  //skip timestamp
 		  for ( Field** field = table->field; *field; ++field)
 		  {
-			  val =(*field)->unpack(buf +(*field)->offset(table->record[0]),val);
+			  if (!((*field)->is_null()))
+				val =(*field)->unpack(buf +(*field)->offset(table->record[0]),val);
 			  //buf= (uchar*)(*field)->unpack(buf,(const uchar*)val);
 		  }
 
