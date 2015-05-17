@@ -459,7 +459,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 		  //my_bitmap_map *old_map = dbug_tmp_use_all_columns(table,table->write_set );
 		  tsdb::MemoryBlockPtr memptr =  rcrdlist[0].memoryBlockPtr();
 		  size_t mmlen = memptr.size();
-		  const char* val = memptr.raw();
+		  const uchar* val = (const uchar*)memptr.raw();
 		  val+=8;  //skip timestamp
 		  for ( Field** field = table->field; *field; ++field)
 		  {
