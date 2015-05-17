@@ -450,6 +450,8 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
   DBUG_ENTER("ha_tsdb_engine::rnd_next");
   MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str,
                        TRUE);
+  if( fRecordIndx < fRecordNbr )
+  {
   tsdb::RecordSet  rcrdlist = fTMSeries->recordSet(fRecordIndx,fRecordIndx);
 
   if ( rcrdlist.size() )
@@ -471,8 +473,9 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 	  std::cerr << "[NOTE]: empty record"  << std::endl;
   }
   fRecordIndx++;
-  rc= HA_ERR_END_OF_FILE;
-  MYSQL_READ_ROW_DONE(rc);
+  }
+  //rc= HA_ERR_END_OF_FILE;
+  //MYSQL_READ_ROW_DONE(rc);
   DBUG_RETURN(rc);
 }
 
@@ -515,12 +518,12 @@ void ha_tsdb_engine::position(const uchar *record)
 */
 int ha_tsdb_engine::rnd_pos(uchar *buf, uchar *pos)
 {
-  int rc;
+  int rc=0;
   DBUG_ENTER("ha_tsdb_engine::rnd_pos");
   MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str,
                        TRUE);
-  rc= HA_ERR_WRONG_COMMAND;
-  MYSQL_READ_ROW_DONE(rc);
+  //rc= HA_ERR_WRONG_COMMAND;
+  //MYSQL_READ_ROW_DONE(rc);
   DBUG_RETURN(rc);
 }
 
