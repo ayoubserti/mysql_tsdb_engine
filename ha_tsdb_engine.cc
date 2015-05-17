@@ -448,31 +448,31 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 {
   int rc=0;
   DBUG_ENTER("ha_tsdb_engine::rnd_next");
-  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str,
-                       TRUE);
+  /*MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str,
+                       TRUE);*/
   if( fRecordIndx < fRecordNbr )
   {
-  tsdb::RecordSet  rcrdlist = fTMSeries->recordSet(fRecordIndx,fRecordIndx);
+	  tsdb::RecordSet  rcrdlist = fTMSeries->recordSet(fRecordIndx,fRecordIndx);
 
-  if ( rcrdlist.size() )
-  {
-	  //my_bitmap_map *old_map = dbug_tmp_use_all_columns(table,table->write_set );
-	  tsdb::MemoryBlockPtr memptr =  rcrdlist[0].memoryBlockPtr();
-	  size_t mmlen = memptr.size();
-	  char* val = memptr.raw();
-	  std::cerr << "[NOTE] : record value " << std::endl;
-	  for ( size_t i =0; i< mmlen ; i++ )
+	  if ( rcrdlist.size() )
 	  {
-		  std::cerr << (int)val[i] << " ";
-	  }
-	  std::cerr << " " << std::endl;
+		  //my_bitmap_map *old_map = dbug_tmp_use_all_columns(table,table->write_set );
+		  tsdb::MemoryBlockPtr memptr =  rcrdlist[0].memoryBlockPtr();
+		  size_t mmlen = memptr.size();
+		  char* val = memptr.raw();
+		  std::cerr << "[NOTE] : record length " <<  mmlen  << std::endl;
+		  for ( size_t i =0; i< mmlen ; i++ )
+		  {
+			  std::cerr << (int)val[i] << " ";
+		  }
+		  std::cerr << " " << std::endl;
 
-  }
-  else 
-  {
-	  std::cerr << "[NOTE]: empty record"  << std::endl;
-  }
-  fRecordIndx++;
+	  }
+	  else 
+	  {
+		  std::cerr << "[NOTE]: empty record"  << std::endl;
+	  }
+	  fRecordIndx++;
   }
   else
   {
@@ -526,6 +526,9 @@ int ha_tsdb_engine::rnd_pos(uchar *buf, uchar *pos)
   DBUG_ENTER("ha_tsdb_engine::rnd_pos");
   MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str,
                        TRUE);
+
+  std::cerr << "[NOTE]: ha_tsdb_engine::rnd_pos"  << std::endl;
+
   //rc= HA_ERR_WRONG_COMMAND;
   MYSQL_READ_ROW_DONE(rc);
   DBUG_RETURN(rc);
