@@ -263,8 +263,8 @@ int ha_tsdb_engine::write_row(uchar *buf)
    {
      //(*field)>pack()
      //uchar* to = (uchar*)sql_alloc((*field)->data_length());
-    recordPtr=  (*field)->pack(recordPtr,buf,(*field)->data_length(),(*field)->offset(table->record[0]));
-	std::cerr << "[NOTE] data length"<< (*field)->data_length() <<std::endl;
+     recordPtr=  (*field)->pack(recordPtr,buf,(*field)->data_length(),(*field)->offset(table->record[0]));
+	 std::cerr << "[NOTE] data length "<< (*field)->data_length() <<std::endl;
      std::cerr << "[NOTE] field offset:" << (*field)->offset(table->record[0]) << " " << buf + (*field)->offset(table->record[0])<< std::endl;
     
    }
@@ -273,13 +273,14 @@ int ha_tsdb_engine::write_row(uchar *buf)
  //must remove exception to enhance performance
   try{
   fTMSeries->appendRecords(1,urecord,true);
+  fTMSeries->flushAppendBuffer();
   }
   catch (tsdb::TimeseriesException& e)
   {
     std::cerr << "COULD NOT SAVE ROW " << e.what() << std::endl;
   }
 
-  ::free(urecord);
+  
   DBUG_RETURN(0);
 }
 
@@ -410,6 +411,13 @@ int ha_tsdb_engine::index_last(uchar *buf)
 int ha_tsdb_engine::rnd_init(bool scan)
 {
   DBUG_ENTER("ha_tsdb_engine::rnd_init");
+  //initialize random access
+  std::cerr << "[NOTE]: scan value" << scan << std::end;
+  std::cerr << "[NOTE]: record Nbr" << fTMSeries->getNRecords() << std::end;
+
+
+
+
   DBUG_RETURN(0);
 }
 
