@@ -412,8 +412,8 @@ int ha_tsdb_engine::rnd_init(bool scan)
 {
   DBUG_ENTER("ha_tsdb_engine::rnd_init");
   //initialize random access
-  std::cerr << "[NOTE]: scan value" << scan << std::end;
-  std::cerr << "[NOTE]: record Nbr" << fTMSeries->getNRecords() << std::end;
+  std::cerr << "[NOTE]: scan value" << scan << std::endl;
+  std::cerr << "[NOTE]: record Nbr" << fTMSeries->getNRecords() << std::endl;
 
 
 
