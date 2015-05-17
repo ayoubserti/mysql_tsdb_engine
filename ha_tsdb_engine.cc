@@ -463,7 +463,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 		  std::cerr << "[NOTE] : record length " <<  mmlen  << std::endl;
 		  for ( size_t i =0; i< mmlen ; i++ )
 		  {
-			  std::cerr << (int)val[i] << " ";
+			  std::cerr << (unsigned)val[i] << " ";
 		  }
 		  std::cerr << " " << std::endl;
 
