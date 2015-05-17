@@ -478,7 +478,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
   {
 	  MYSQL_READ_ROW_DONE(rc);
   }
-  //rc= HA_ERR_END_OF_FILE;
+  
   //MYSQL_READ_ROW_DONE(rc);
   DBUG_RETURN(rc);
 }
@@ -527,7 +527,7 @@ int ha_tsdb_engine::rnd_pos(uchar *buf, uchar *pos)
   MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str,
                        TRUE);
   //rc= HA_ERR_WRONG_COMMAND;
-  //MYSQL_READ_ROW_DONE(rc);
+  MYSQL_READ_ROW_DONE(rc);
   DBUG_RETURN(rc);
 }
 
