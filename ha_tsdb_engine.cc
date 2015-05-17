@@ -473,6 +473,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 		  std::cerr << "[NOTE]: empty record"  << std::endl;
 	  }
 	  fRecordIndx++;
+	  table->status = 0;
   }
   else
   {
