@@ -461,12 +461,16 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 	  std::cerr << "[NOTE] : record value " << std::endl;
 	  for ( size_t i =0; i< mmlen ; i++ )
 	  {
-		  std::cerr << (int)val[i];
+		  std::cerr << (int)val[i] << " ";
 	  }
-	  std::cerr << std::endl;
+	  std::cerr << " " << std::endl;
 
   }
-
+  else 
+  {
+	  std::cerr << "[NOTE]: empty record"  << std::endl;
+  }
+  fRecordIndx++;
   rc= HA_ERR_END_OF_FILE;
   MYSQL_READ_ROW_DONE(rc);
   DBUG_RETURN(rc);
