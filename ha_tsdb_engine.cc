@@ -473,15 +473,16 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 	  {
 		  std::cerr << "[NOTE]: empty record"  << std::endl;
 	  }
+	  rc = 0;
 	  fRecordIndx++;
 	  table->status = 0;
   }
   else
   {
-	  MYSQL_READ_ROW_DONE(rc);
+	  rc = HA_ERR_END_OF_FILE;
   }
   
-  //MYSQL_READ_ROW_DONE(rc);
+  MYSQL_READ_ROW_DONE(rc);
   DBUG_RETURN(rc);
 }
 
