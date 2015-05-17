@@ -448,8 +448,8 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 {
   int rc=0;
   DBUG_ENTER("ha_tsdb_engine::rnd_next");
-  /*MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str,
-                       TRUE);*/
+  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str,
+                       TRUE);
   if( fRecordIndx < fRecordNbr )
   {
 	  tsdb::RecordSet  rcrdlist = fTMSeries->recordSet(fRecordIndx,fRecordIndx);
@@ -463,7 +463,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 		  std::cerr << "[NOTE] : record length " <<  mmlen  << std::endl;
 		  for ( size_t i =0; i< mmlen ; i++ )
 		  {
-			  std::cerr << (unsigned char)val[i] << " ";
+			  std::cerr << ((unsigned)val[i] & 0xFF) << " ";
 			  buf[i] = val[i];
 		  }
 		  std::cerr << " " << std::endl;
@@ -507,6 +507,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 void ha_tsdb_engine::position(const uchar *record)
 {
   DBUG_ENTER("ha_tsdb_engine::position");
+  std::cerr << "[NOTE] : position" << std::endl;
   DBUG_VOID_RETURN;
 }
 
