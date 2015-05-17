@@ -529,7 +529,7 @@ int ha_tsdb_engine::rnd_pos(uchar *buf, uchar *pos)
 
   std::cerr << "[NOTE]: ha_tsdb_engine::rnd_pos"  << std::endl;
 
-  //rc= HA_ERR_WRONG_COMMAND;
+  rc= HA_ERR_WRONG_COMMAND;
   MYSQL_READ_ROW_DONE(rc);
   DBUG_RETURN(rc);
 }
