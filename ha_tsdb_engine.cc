@@ -264,7 +264,7 @@ int ha_tsdb_engine::write_row(uchar *buf)
      //(*field)>pack()
      //uchar* to = (uchar*)sql_alloc((*field)->data_length());
     recordPtr=  (*field)->pack(recordPtr,buf,(*field)->data_length(),(*field)->offset(table->record[0]));
-    
+	std::cerr << "[NOTE] data length"<< (*field)->data_length() <<std::endl;
      std::cerr << "[NOTE] field offset:" << (*field)->offset(table->record[0]) << " " << buf + (*field)->offset(table->record[0])<< std::endl;
     
    }
