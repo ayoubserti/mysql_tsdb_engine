@@ -412,11 +412,13 @@ int ha_tsdb_engine::rnd_init(bool scan)
 {
   DBUG_ENTER("ha_tsdb_engine::rnd_init");
   //initialize random access
-  std::cerr << "[NOTE]: scan value" << scan << std::endl;
-  std::cerr << "[NOTE]: record Nbr" << fTMSeries->getNRecords() << std::endl;
 
+  
+  fRecordIndx=0;
+  fRecordNbr = fTMSeries->getNRecords();
 
-
+  std::cerr << "[NOTE]: scan value " << scan << std::endl;
+  std::cerr << "[NOTE]: record Nbr " << fRecordNbr << std::endl;
 
   DBUG_RETURN(0);
 }
@@ -424,6 +426,8 @@ int ha_tsdb_engine::rnd_init(bool scan)
 int ha_tsdb_engine::rnd_end()
 {
   DBUG_ENTER("ha_tsdb_engine::rnd_end");
+
+  std::cerr << "[NOTE] :  random access end " << std::endl; 
   DBUG_RETURN(0);
 }
 
@@ -442,10 +446,27 @@ int ha_tsdb_engine::rnd_end()
 */
 int ha_tsdb_engine::rnd_next(uchar *buf)
 {
-  int rc;
+  int rc=0;
   DBUG_ENTER("ha_tsdb_engine::rnd_next");
   MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str,
                        TRUE);
+  tsdb::RecordSet  rcrdlist = fTMSeries->recordSet(fRecordIndx,fRecordIndx);
+
+  if ( rcrdlist.size() )
+  {
+	  //my_bitmap_map *old_map = dbug_tmp_use_all_columns(table,table->write_set );
+	  tsdb::MemoryBlockPtr memptr =  rcrdlist[0].memoryBlockPtr();
+	  size_t mmlen = memptr.size();
+	  char* val = memptr.raw();
+	  std::cerr << "[NOTE] : record value " << std::endl;
+	  for ( size_t i =0; i< mmlen ; i++ )
+	  {
+		  std::cerr << (int)val[i];
+	  }
+	  std::cerr << std::endl;
+
+  }
+
   rc= HA_ERR_END_OF_FILE;
   MYSQL_READ_ROW_DONE(rc);
   DBUG_RETURN(rc);

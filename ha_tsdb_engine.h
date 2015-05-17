@@ -241,6 +241,10 @@ class ha_tsdb_engine: public handler
 private:
 mysql_mutex_t fMutex;
 tsdb::Timeseries* fTMSeries;
+
+uint64 fRecordNbr;
+uint64 fRecordIndx;
+
 //private function
 
  int CreateTSDBStructure(Field** inFields, tsdb::Structure* *outTSDBStruct);
