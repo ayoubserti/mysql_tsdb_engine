@@ -461,7 +461,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 		  size_t mmlen = memptr.size();
 		  char* val = memptr.raw();
 		  std::cerr << "[NOTE] : record length " <<  mmlen  << std::endl;
-		  for ( size_t i =0; i< mmlen ; i++ )
+		  for ( size_t i =8; i< mmlen ; i++ )
 		  {
 			  std::cerr << ((unsigned)val[i] & 0xFF) << " ";
 			  buf[i] = val[i];
