@@ -459,11 +459,12 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 		  //my_bitmap_map *old_map = dbug_tmp_use_all_columns(table,table->write_set );
 		  tsdb::MemoryBlockPtr memptr =  rcrdlist[0].memoryBlockPtr();
 		  size_t mmlen = memptr.size();
-		  char* val = memptr.raw();
+		  const char* val = memptr.raw();
 		  val+=8;  //skip timestamp
 		  for ( Field** field = table->field; *field; ++field)
 		  {
-			  buf= (uchar*)(*field)->unpack(buf,(const uchar*)val);
+			  val =(*field)->unpack(buf +(*field)->offset(table->record[0]),val);
+			  //buf= (uchar*)(*field)->unpack(buf,(const uchar*)val);
 		  }
 
 		  std::cerr << "[NOTE] : record length " <<  mmlen  << std::endl;
