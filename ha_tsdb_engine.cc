@@ -474,6 +474,10 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
   }
   fRecordIndx++;
   }
+  else
+  {
+	  MYSQL_READ_ROW_DONE(rc);
+  }
   //rc= HA_ERR_END_OF_FILE;
   //MYSQL_READ_ROW_DONE(rc);
   DBUG_RETURN(rc);
