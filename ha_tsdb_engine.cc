@@ -460,6 +460,12 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 		  tsdb::MemoryBlockPtr memptr =  rcrdlist[0].memoryBlockPtr();
 		  size_t mmlen = memptr.size();
 		  char* val = memptr.raw();
+		  val+=8;  //skip timestamp
+		  for ( Field** field = table->field; *field; ++field)
+		  {
+			  buf= (uchar*)(*field)->unpack(buf,(const uchar*)val);
+		  }
+
 		  std::cerr << "[NOTE] : record length " <<  mmlen  << std::endl;
 		  for ( size_t i =8; i< mmlen ; i++ )
 		  {
