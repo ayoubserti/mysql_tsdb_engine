@@ -269,6 +269,8 @@ int ha_tsdb_engine::write_row(uchar *buf)
     
    }
  }
+
+ //must remove exception to enhance performance
   try{
   fTMSeries->appendRecords(1,urecord,true);
   }
@@ -276,6 +278,8 @@ int ha_tsdb_engine::write_row(uchar *buf)
   {
     std::cerr << "COULD NOT SAVE ROW " << e.what() << std::endl;
   }
+
+  ::free(urecord);
   DBUG_RETURN(0);
 }
 
