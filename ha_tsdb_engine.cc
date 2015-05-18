@@ -263,7 +263,7 @@ int ha_tsdb_engine::write_row(uchar *buf)
   micros += tms.tv_usec/1000;
  
   
-  std::cerr << "[NOTE]: micros = " << micros << std::endl;
+  //std::cerr << "[NOTE]: micros = " << micros << std::endl;
   
   memcpy(recordPtr,&micros,8);
   uchar* urecord = recordPtr;
@@ -279,8 +279,8 @@ int ha_tsdb_engine::write_row(uchar *buf)
      //uchar* to = (uchar*)sql_alloc((*field)->data_length());
      if ( !((*field)->is_null()))
         recordPtr=  (*field)->pack(recordPtr,buf+(*field)->offset(table->record[0]));
-	   std::cerr << "[NOTE] data length "<< (*field)->data_length() <<std::endl;
-     std::cerr << "[NOTE] field offset:" << (*field)->offset(table->record[0]) << " " << buf + (*field)->offset(table->record[0])<< std::endl;
+	//   std::cerr << "[NOTE] data length "<< (*field)->data_length() <<std::endl;
+     //std::cerr << "[NOTE] field offset:" << (*field)->offset(table->record[0]) << " " << buf + (*field)->offset(table->record[0])<< std::endl;
     
    }
  }
@@ -497,7 +497,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 			  //buf= (uchar*)(*field)->unpack(buf,(const uchar*)val);
 		  }
 
-		  std::cerr << "[NOTE] : record length " <<  mmlen  << std::endl;
+		  //std::cerr << "[NOTE] : record length " <<  mmlen  << std::endl;
 	  }
 	  else 
 	  {
