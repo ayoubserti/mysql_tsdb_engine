@@ -257,7 +257,7 @@ int ha_tsdb_engine::write_row(uchar *buf)
   uchar* urecord = recordPtr;
   recordPtr+=8;
   memcpy(recordPtr, buf, table->s->null_bytes);
-  recordPtr += table->s->null_bytes;
+ // recordPtr += table->s->null_bytes;
  for (Field **field = table->field ; *field ; field++)
  {
    
