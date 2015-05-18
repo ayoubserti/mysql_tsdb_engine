@@ -238,24 +238,21 @@ int ha_tsdb_engine::write_row(uchar *buf)
  size_t recordsize = fTMSeries->structure()->getSizeOf();
  uchar* recordPtr = (uchar*)sql_alloc(recordsize + 8 + 1); //8bytes for time stamps, 1 dummy byte
  
- struct timespec tms;
- if (clock_gettime(CLOCK_REALTIME,&tms)) 
+ struct timeval  tms;
+ if (gettimeofday(&tms,NULL)) 
  {
         return -1;
  }
-  int64_t micros = tms.tv_sec * 1000000;
+  uint64_t micros = tms.tv_sec * 1000000ull;
   /* Add full microseconds */
-  micros += tms.tv_nsec/1000;
-  /* round up if necessary */
-  if (tms.tv_nsec % 1000 >= 500) {
-      ++micros;
-  }
+  micros += tms.tv_usec;
+ 
   
   std::cerr << "[NOTE]: micros = " << micros << std::endl;
   
   memcpy(recordPtr,&micros,8);
   uchar* urecord = recordPtr;
- // recordPtr+=8;
+  recordPtr+=8;
   memcpy(recordPtr, buf, table->s->null_bytes);
   recordPtr += table->s->null_bytes;
  for (Field **field = table->field ; *field ; field++)
@@ -462,7 +459,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 		  tsdb::MemoryBlockPtr memptr =  rcrdlist[0].memoryBlockPtr();
 		  size_t mmlen = memptr.size();
 		  const uchar* val = (const uchar*)memptr.raw();
-		  //val+=8;  //skip timestamp
+		  val+=8;  //skip timestamp
 		  memcpy(buf,val,table->s->null_bytes);
 		  val+= table->s->null_bytes;
 		  for ( Field** field = table->field; *field; ++field)
