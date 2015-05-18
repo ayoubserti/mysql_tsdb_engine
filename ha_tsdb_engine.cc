@@ -202,6 +202,7 @@ int ha_tsdb_engine::open(const char *name, int mode, uint test_if_locked)
 	  return -1;
 	}
   H5Fclose(ofh);
+  
   DBUG_RETURN(0);
 }
 
@@ -216,6 +217,7 @@ int ha_tsdb_engine::close(void)
 {
   DBUG_ENTER("ha_tsdb_engine::close");
   
+  H5close();
   if (NULL != fTMSeries )
     delete fTMSeries;
   
