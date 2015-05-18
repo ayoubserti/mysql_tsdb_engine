@@ -243,7 +243,7 @@ int ha_tsdb_engine::write_row(uchar *buf)
  {
         return -1;
  }
-  uint64_t micros = tms.tv_sec * 1000000ull;
+  int64_t micros = tms.tv_sec * 1000000ull;
   /* Add full microseconds */
   micros += tms.tv_usec;
  
