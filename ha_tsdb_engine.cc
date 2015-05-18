@@ -249,10 +249,10 @@ int ha_tsdb_engine::write_row(uchar *buf)
  
   
   std::cerr << "[NOTE]: micros = " << micros << std::endl;
-  
+  recordPtr+=8;
   memcpy(recordPtr,&micros,8);
   uchar* urecord = recordPtr;
-  recordPtr+=8;
+  
   memcpy(recordPtr, buf, table->s->null_bytes);
   recordPtr += table->s->null_bytes;
  for (Field **field = table->field ; *field ; field++)
