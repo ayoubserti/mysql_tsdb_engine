@@ -255,9 +255,9 @@ int ha_tsdb_engine::write_row(uchar *buf)
   
   memcpy(recordPtr,&micros,8);
   uchar* urecord = recordPtr;
-  recordPtr+=8;
+ // recordPtr+=8;
   memcpy(recordPtr, buf, table->s->null_bytes);
- // recordPtr += table->s->null_bytes;
+  recordPtr += table->s->null_bytes;
  for (Field **field = table->field ; *field ; field++)
  {
    
@@ -462,7 +462,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 		  tsdb::MemoryBlockPtr memptr =  rcrdlist[0].memoryBlockPtr();
 		  size_t mmlen = memptr.size();
 		  const uchar* val = (const uchar*)memptr.raw();
-		  val+=8;  //skip timestamp
+		  //val+=8;  //skip timestamp
 		  memcpy(buf,val,table->s->null_bytes);
 		  val+= table->s->null_bytes;
 		  for ( Field** field = table->field; *field; ++field)
