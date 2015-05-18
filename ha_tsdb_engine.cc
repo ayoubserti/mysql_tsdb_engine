@@ -462,6 +462,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 		  val+=8;  //skip timestamp
 		  memcpy(buf,val,table->s->null_bytes);
 		  val+= table->s->null_bytes;
+		 
 		  for ( Field** field = table->field; *field; ++field)
 		  {
 			  if (!((*field)->is_null()))
