@@ -27,6 +27,19 @@ static const char *ha_tsdb_engine_exts[] = {
   ".tsdb"
 };
 
+static uint64 _getTimeepoch()
+{
+	struct timeval  tms;
+	if (gettimeofday(&tms,NULL)) 
+	{
+        return -1;
+	}
+	uint64 micros = tms.tv_sec * 1000000;
+	/* Add full microseconds */
+	micros += tms.tv_usec;
+
+	return micros;
+}
 
 static handler *tsdb_engine_create_handler(handlerton *hton,
                                        TABLE_SHARE *table, 
@@ -419,6 +432,9 @@ int ha_tsdb_engine::rnd_init(bool scan)
   fRecordIndx=0;
   fRecordNbr = fTMSeries->getNRecords();
 
+  fTimeEcl =0;
+  fRownbr =0;
+
   std::cerr << "[NOTE]: scan value " << scan << std::endl;
   std::cerr << "[NOTE]: record Nbr " << fRecordNbr << std::endl;
 
@@ -430,6 +446,9 @@ int ha_tsdb_engine::rnd_end()
   DBUG_ENTER("ha_tsdb_engine::rnd_end");
 
   std::cerr << "[NOTE] :  random access end " << std::endl; 
+  std::cerr << "[PROFILING]: fetching row took " << fTimeEcl << " for " << fRownbr << " : " <<  std::endl;
+  if ( fRownbr )
+	  std::cerr << "Time/row " << fTimeEcl/fRownbr << std::endl;
   DBUG_RETURN(0);
 }
 
@@ -469,7 +488,12 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 		  for ( Field** field = table->field; *field; ++field)
 		  {
 			  if (!((*field)->is_null()))
+			  {
+				uint64 start = _getTimeepoch();
 				val =(*field)->unpack(buf +(*field)->offset(table->record[0]),val);
+				fTimeEcl+= _getTimeepoch() - start;
+				fRownbr++;
+			  }
 			  //buf= (uchar*)(*field)->unpack(buf,(const uchar*)val);
 		  }
 

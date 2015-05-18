@@ -245,6 +245,10 @@ tsdb::Timeseries* fTMSeries;
 uint64 fRecordNbr;
 uint64 fRecordIndx;
 
+//debug info
+uint64 fTimeEcl;
+uint64 fRownbr;
+
 //private function
 
  int CreateTSDBStructure(Field** inFields, tsdb::Structure* *outTSDBStruct);
