@@ -431,6 +431,8 @@ int ha_tsdb_engine::rnd_init(bool scan)
   
   fRecordIndx=0;
   fRecordNbr = fTMSeries->getNRecords();
+  fCacheRecInd = -1;
+  fCacheLen = 0;
 
   fTimeEcl =0;
   fRownbr =0;
@@ -469,18 +471,34 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 {
   int rc=0;
   DBUG_ENTER("ha_tsdb_engine::rnd_next");
-  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str,
-                       TRUE);
+  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str,TRUE);
+  
   if( fRecordIndx < fRecordNbr )
   {
-	  uint64 start = _getTimeepoch();
-	  tsdb::RecordSet  rcrdlist = fTMSeries->recordSet(fRecordIndx,fRecordIndx);
-	  fTimeEcl+= _getTimeepoch() - start;
-	  fRownbr++;
-	  if ( rcrdlist.size() )
+    
+    if ( fRecordIndx > fCacheRecInd + fCacheLen)
+    {
+      try
+      {
+         uint64 start = _getTimeepoch();
+	       fCacheRecords = fTMSeries->recordSet(fRecordIndx,fRecordIndx+1000);
+	       fTimeEcl+= _getTimeepoch() - start;
+	       fRownbr++;
+        
+      }
+      catch(...)
+      {
+        std::cerr << "[NOTE] could not get recordSet" << std::endl; 
+      }
+      fCacheRecInd = fRecordIndx;
+      fCacheLen= fCacheRecords.size();
+    }
+    
+	 
+	  if (fCacheLen > 0)
 	  {
 		  //my_bitmap_map *old_map = dbug_tmp_use_all_columns(table,table->write_set );
-		  tsdb::MemoryBlockPtr memptr =  rcrdlist[0].memoryBlockPtr();
+		  tsdb::MemoryBlockPtr memptr =  rcrdlist[fRecordIndx - fCacheRecInd].memoryBlockPtr();
 		  size_t mmlen = memptr.size();
 		  const uchar* val = (const uchar*)memptr.raw();
 		  val+=8;  //skip timestamp
@@ -492,13 +510,12 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 			  if (!((*field)->is_null()))
 			  {
 				
-				val =(*field)->unpack(buf +(*field)->offset(table->record[0]),val);
+			    	val =(*field)->unpack(buf +(*field)->offset(table->record[0]),val);
 				
 			  }
-			  //buf= (uchar*)(*field)->unpack(buf,(const uchar*)val);
+			 
 		  }
 
-		  //std::cerr << "[NOTE] : record length " <<  mmlen  << std::endl;
 	  }
 	  else 
 	  {
@@ -507,7 +524,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 	  rc = 0;
 	  fRecordIndx++;
 	  table->status = 0;
-  }
+  } 
   else
   {
 	  rc = HA_ERR_END_OF_FILE;

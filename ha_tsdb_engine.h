@@ -18,6 +18,7 @@ namespace tsdb{
   class Field;
   class Table;
   class Timeseries;
+  class RecordSet;
 }
 
 /*
@@ -244,6 +245,10 @@ tsdb::Timeseries* fTMSeries;
 
 uint64 fRecordNbr;
 uint64 fRecordIndx;
+uint64 fCacheRecInd;
+uint64 fCacheLen;
+
+tsdb::RecordSet fCacheRecords;
 
 //debug info
 uint64 fTimeEcl;
