@@ -495,7 +495,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
     }
     
 	 
-	  if (fCacheLen > 0)
+	  if (fCacheRecords.size() > 0)
 	  {
 		  //my_bitmap_map *old_map = dbug_tmp_use_all_columns(table,table->write_set );
 		  tsdb::MemoryBlockPtr memptr =  fCacheRecords[fRecordIndx - fCacheRecInd].memoryBlockPtr();
