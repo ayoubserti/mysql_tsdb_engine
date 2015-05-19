@@ -481,7 +481,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
       try
       {
          uint64 start = _getTimeepoch();
-	       fCacheRecords = fTMSeries->recordSet(fRecordIndx,fRecordIndx+1000);
+	       fCacheRecords = fTMSeries->recordSet(fRecordIndx,fRecordIndx+10000);
 	       fTimeEcl+= _getTimeepoch() - start;
 	       fRownbr++;
         
