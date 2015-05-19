@@ -247,7 +247,7 @@ uint64 fRecordNbr;
 uint64 fRecordIndx;
 uint64 fCacheRecInd;
 uint64 fCacheLen;
-
+bool   fFirstEteration;
 tsdb::RecordSet fCacheRecords;
 
 //debug info

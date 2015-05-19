@@ -431,9 +431,9 @@ int ha_tsdb_engine::rnd_init(bool scan)
   
   fRecordIndx=0;
   fRecordNbr = fTMSeries->getNRecords();
-  fCacheRecInd = -1;
+  fCacheRecInd = 0;
   fCacheLen = 0;
-
+  fFirstEteration = true;
   fTimeEcl =0;
   fRownbr =0;
 
@@ -476,7 +476,7 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
   if( fRecordIndx < fRecordNbr )
   {
     
-    if ( fRecordIndx > fCacheRecInd + fCacheLen)
+    if ( fRecordIndx > fCacheRecInd + fCacheLen || (fFirstEteration == true))
     {
       try
       {
@@ -492,10 +492,11 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
       }
       fCacheRecInd = fRecordIndx;
       fCacheLen= fCacheRecords.size();
+      fFirstEteration = false;
     }
     
 	 
-	  if (fCacheRecords.size() > 0)
+	  if (fCacheLen > 0)
 	  {
 		  //my_bitmap_map *old_map = dbug_tmp_use_all_columns(table,table->write_set );
 		  tsdb::MemoryBlockPtr memptr =  fCacheRecords[fRecordIndx - fCacheRecInd].memoryBlockPtr();
