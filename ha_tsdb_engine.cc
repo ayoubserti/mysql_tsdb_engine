@@ -473,8 +473,10 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
                        TRUE);
   if( fRecordIndx < fRecordNbr )
   {
+	  uint64 start = _getTimeepoch();
 	  tsdb::RecordSet  rcrdlist = fTMSeries->recordSet(fRecordIndx,fRecordIndx);
-
+	  fTimeEcl+= _getTimeepoch() - start;
+	  fRownbr++;
 	  if ( rcrdlist.size() )
 	  {
 		  //my_bitmap_map *old_map = dbug_tmp_use_all_columns(table,table->write_set );
@@ -489,10 +491,9 @@ int ha_tsdb_engine::rnd_next(uchar *buf)
 		  {
 			  if (!((*field)->is_null()))
 			  {
-				uint64 start = _getTimeepoch();
+				
 				val =(*field)->unpack(buf +(*field)->offset(table->record[0]),val);
-				fTimeEcl+= _getTimeepoch() - start;
-				fRownbr++;
+				
 			  }
 			  //buf= (uchar*)(*field)->unpack(buf,(const uchar*)val);
 		  }
