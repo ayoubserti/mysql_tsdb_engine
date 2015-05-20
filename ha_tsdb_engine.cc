@@ -13,6 +13,7 @@
 #include "ha_tsdb_engine.h"
 #include "probes_mysql.h"
 #include "sql_plugin.h"
+#include "service_thd_alloc.h"
 
 //internal use
 #include <sys/stat.h>
@@ -251,7 +252,7 @@ int ha_tsdb_engine::write_row(uchar *buf)
  
  
  size_t recordsize = fTMSeries->structure()->getSizeOf();
- uchar* recordPtr = (uchar*)thd_alloc(recordsize + 8 + 1); //8bytes for time stamps, 1 dummy byte
+ uchar* recordPtr = (uchar*)thd_alloc(ha_thd(),recordsize + 8 + 1); //8bytes for time stamps, 1 dummy byte
  
  struct timeval  tms;
  if (gettimeofday(&tms,NULL)) 
