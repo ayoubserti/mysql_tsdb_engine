@@ -237,7 +237,9 @@ class ha_tsdb_engine: public handler
 
   THR_LOCK_DATA **store_lock(THD *thd, THR_LOCK_DATA **to,
                              enum thr_lock_type lock_type);     ///< required
-
+  
+  virtual void start_bulk_insert(ha_rows rows);
+  virtual int end_bulk_insert();
 
 private:
 mysql_mutex_t fMutex;

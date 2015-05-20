@@ -905,6 +905,22 @@ mysql_mutex_lock(&fMutex);
 }
 
 
+void ha_tsdb_engine::start_bulk_insert(ha_rows rows)
+{
+  std::cerr << "ENTER ha_tsdb_engine::start_bulk_insert" << std::endl;
+}
+
+int ha_tsdb_engine::end_bulk_insert()
+{
+  int err = 0;
+  
+   std::cerr << "ENTER ha_tsdb_engine::end_bulk_insert" << std::endl;
+  
+  DBUG_RETURN(err);
+}
+  
+
+
 struct st_mysql_storage_engine tsdb_engine_storage_engine=
 { MYSQL_HANDLERTON_INTERFACE_VERSION };
 
