@@ -271,25 +271,25 @@ int ha_tsdb_engine::write_row(uchar *buf)
   recordPtr+=8;
   memcpy(recordPtr, buf, table->s->null_bytes);
   recordPtr += table->s->null_bytes;
- for (Field **field = table->field ; *field ; field++)
- {
-   
-   if ( !((*field)->is_null()) )
+   for (Field **field = table->field ; *field ; field++)
    {
-     //(*field)>pack()
-     //uchar* to = (uchar*)sql_alloc((*field)->data_length());
-     if ( !((*field)->is_null()))
-        recordPtr=  (*field)->pack(recordPtr,buf+(*field)->offset(table->record[0]));
-	//   std::cerr << "[NOTE] data length "<< (*field)->data_length() <<std::endl;
-     //std::cerr << "[NOTE] field offset:" << (*field)->offset(table->record[0]) << " " << buf + (*field)->offset(table->record[0])<< std::endl;
-    
+     
+     if ( !((*field)->is_null()) )
+     {
+       //(*field)>pack()
+       //uchar* to = (uchar*)sql_alloc((*field)->data_length());
+       if ( !((*field)->is_null()))
+          recordPtr=  (*field)->pack(recordPtr,buf+(*field)->offset(table->record[0]));
+  	//   std::cerr << "[NOTE] data length "<< (*field)->data_length() <<std::endl;
+       //std::cerr << "[NOTE] field offset:" << (*field)->offset(table->record[0]) << " " << buf + (*field)->offset(table->record[0])<< std::endl;
+      
+     }
    }
- }
 
- //must remove exception to enhance performance
+ //must remove exception to enhance performance for win32 bit
   try{
   fTMSeries->appendRecords(1,urecord,true);
-  fTMSeries->flushAppendBuffer();
+  
   }
   catch (tsdb::TimeseriesException& e)
   {
@@ -913,7 +913,7 @@ void ha_tsdb_engine::start_bulk_insert(ha_rows rows)
 int ha_tsdb_engine::end_bulk_insert()
 {
   int err = 0;
-  
+  fTMSeries->flushAppendBuffer();
    std::cerr << "ENTER ha_tsdb_engine::end_bulk_insert" << std::endl;
   
   DBUG_RETURN(err);
