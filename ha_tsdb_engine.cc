@@ -13,7 +13,7 @@
 #include "ha_tsdb_engine.h"
 #include "probes_mysql.h"
 #include "sql_plugin.h"
-#include "service_thd_alloc.h"
+
 
 //internal use
 #include <sys/stat.h>
