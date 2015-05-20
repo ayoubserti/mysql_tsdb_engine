@@ -913,7 +913,7 @@ void ha_tsdb_engine::start_bulk_insert(ha_rows rows)
 int ha_tsdb_engine::end_bulk_insert()
 {
   int err = 0;
-  fTMSeries->flushAppendBuffer();
+   //fTMSeries->flushAppendBuffer();
    std::cerr << "ENTER ha_tsdb_engine::end_bulk_insert" << std::endl;
   
   DBUG_RETURN(err);
